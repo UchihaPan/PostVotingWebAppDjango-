@@ -27,6 +27,7 @@ def detail(request, pk):
 @login_required
 def upvote(request, pk):
     post = Post.objects.get(pk=pk)
+
     if post.votes >= 1:
         return redirect('detail', pk )
     else:
