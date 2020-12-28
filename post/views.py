@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.urls import reverse_lazy
@@ -11,7 +11,29 @@ from django.contrib.auth.decorators import login_required
 
 
 def home(request):
-    return render(request, 'base.html')
+    posts=Post.objects.all()
+
+    return render(request, 'post/home.html',{
+'posts':posts
+    })
+
+@login_required
+def detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    return render(request, 'post/detail.html', {
+        'post': post
+    })
+
+@login_required
+def upvote(request, pk):
+    post = Post.objects.get(pk=pk)
+    if post.votes >= 1:
+        return redirect('detail', pk )
+    else:
+        post.votes+=1
+    post.save()
+    return redirect('detail', pk)
+
 
 
 @login_required()
@@ -27,7 +49,7 @@ def create(request):
             post.icon = request.FILES['icon']
             post.image = request.FILES['image']
             post.save()
-            return redirect('home')
+            return redirect('detail', post.pk)
         else:
             return render(request, 'post/create.html', {'errors': 'Please enter all the fields'})
 

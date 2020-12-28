@@ -12,7 +12,7 @@ class Post(models.Model):
     votes = models.IntegerField(default=0)
     image = models.ImageField(upload_to='images/')
     icon = models.ImageField(upload_to='icons/')
-    desciption = models.TextField(max_length=1000)
+    description = models.TextField(max_length=1000)
 
     def __str__(self):
         return str(self.user)
